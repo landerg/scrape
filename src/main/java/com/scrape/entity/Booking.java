@@ -1,6 +1,9 @@
 package com.scrape.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,23 +11,31 @@ import lombok.Setter;
 
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Entity
 public class Booking {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String title;
-    private String location;
-    private String propertyDetails;
-    private String description;
-    private String publicationDate;
-    private String mainPhotoUrl;
-    private List<String> smallPhotoUrls;
     private String price;
-    private String additionalInformation;
+    private String location;
+    private String date;
+    private String area;
+    private String mainLink;
 
-    // Getters and setters omitted for brevity
+    public Booking(Long id, String title, String price, String location, String date, String area, String mainLink) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+        this.location = location;
+        this.date = date;
+        this.area = area;
+        this.mainLink = mainLink;
+    }
+
+    // Getters and Setters
 }

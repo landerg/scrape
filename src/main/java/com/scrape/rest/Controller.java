@@ -1,7 +1,8 @@
 package com.scrape.rest;
 
 import com.scrape.entity.Booking;
-import com.scrape.scrape.Scraper;
+import com.scrape.service.ScraperService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,16 +12,13 @@ import java.util.List;
 @RestController
 public class Controller {
 
-    private final Scraper scraper;
+    @Autowired
+    private ScraperService scraperService;
 
-    public Controller(Scraper scraper) {
-        this.scraper = scraper;
+    @GetMapping("/")
+    public List<Booking> scrape() throws IOException {
+        String url = "https://www.olx.ua/uk/lvov/q-%D0%BA%D0%B2%D0%B0%D1%80%D1%82%D0%B8%D1%80%D0%B0/"; // Replace with the URL you want to scrape
+        return scraperService.scrapeAllPages(url);
     }
-
-    @GetMapping("/bookings")
-    public List<Booking> getBookings() throws IOException {
-        String url = "https://dom.ria.com/uk/arenda-kvartir/"; // Replace with the actual URL
-        return scraper.scrape(url);
-    }
-
 }
+
