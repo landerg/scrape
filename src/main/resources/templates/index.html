@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraped Bookings</title>
+</head>
+<body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 0 20px;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .booking {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+    .booking h2 {
+        margin-top: 0;
+    }
+
+    .booking p {
+        margin: 5px 0;
+    }
+
+    .booking a {
+        color: blue;
+        text-decoration: none;
+    }
+
+    .booking a:hover {
+        text-decoration: underline;
+    }
+
+</style>
+
+<div class="container">
+    <h1>Scraped Bookings</h1>
+    <div id="bookings-list"></div>
+</div>
+
+<script>
+    // Function to fetch and display scraped data
+    async function fetchAndDisplayData() {
+        try {
+            const response = await fetch('http://localhost:8080/');
+            const bookings = await response.json();
+            displayBookings(bookings);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    // Function to display the scraped bookings on the page
+    function displayBookings(bookings) {
+        const bookingsList = document.getElementById('bookings-list');
+
+        bookings.forEach(booking => {
+            const bookingDiv = document.createElement('div');
+            bookingDiv.classList.add('booking');
+
+            const titleHeading = document.createElement('h2');
+            titleHeading.textContent = booking.title;
+            bookingDiv.appendChild(titleHeading);
+
+            const priceParagraph = document.createElement('p');
+            priceParagraph.textContent = 'Price: ' + booking.price;
+            bookingDiv.appendChild(priceParagraph);
+
+            const locationParagraph = document.createElement('p');
+            locationParagraph.textContent = 'Location: ' + booking.location;
+            bookingDiv.appendChild(locationParagraph);
+
+            const dateParagraph = document.createElement('p');
+            dateParagraph.textContent = 'Date: ' + booking.date;
+            bookingDiv.appendChild(dateParagraph);
+
+            const areaParagraph = document.createElement('p');
+            areaParagraph.textContent = 'Area: ' + booking.area;
+            bookingDiv.appendChild(areaParagraph);
+
+            const linkAnchor = document.createElement('a');
+            linkAnchor.href = booking.mainLink;
+            linkAnchor.textContent = 'View Details';
+            bookingDiv.appendChild(linkAnchor);
+
+            bookingsList.appendChild(bookingDiv);
+        });
+    }
+
+    // Call the fetchAndDisplayData function when the page loads
+    window.onload = fetchAndDisplayData;
+</script>
+</body>
+</html>
