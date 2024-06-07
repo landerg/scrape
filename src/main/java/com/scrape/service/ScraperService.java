@@ -1,68 +1,126 @@
 package com.scrape.service;
 
 import com.scrape.entity.Booking;
+import com.scrape.repository.BookingRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class ScraperService {
 
-    public List<Booking> scrapeAllPages(String baseUrl) throws IOException {
-        List<Booking> allBookings = new ArrayList<>();
-        int currentPage = 1;
-        int totalPages = getTotalPages(baseUrl);
+    @Autowired
+    private BookingRepository bookingRepository;
 
-        while (currentPage <= totalPages) {
-            System.out.println("Scraping page " + currentPage + " of " + totalPages + "...");
-            String url = baseUrl + "?page=" + currentPage;
-            List<Booking> pageBookings = scrapePage(url);
-            allBookings.addAll(pageBookings);
-            currentPage++;
+    @Async
+    public CompletableFuture<List<Booking>> scrapePage(String url) {
+        try {
+            List<Booking> scrapedBookings = new ArrayList<>();
+            Document doc = Jsoup.connect(url).get();
+            Elements elements = doc.select("div[data-cy='l-card']");
+            for (Element element : elements) {
+                Booking booking = new Booking();
+                String title = element.select("h6.css-16v5mdi.er34gjf0").text();
+                String priceString = element.select("p.css-tyui9s.er34gjf0").text();
+                String locationDate = element.select("p.css-1a4brun.er34gjf0").text();
+                String area = element.select("div.css-643j0o").text();
+                String mainLink = element.select("a.css-z3gu2d").attr("href");
+
+                // Check if priceString is empty
+                if (priceString.isEmpty()) {
+                    // Log or skip this element, as it doesn't have a price
+                    continue;
+                }
+
+                // Removing non-numeric characters and parsing the price
+                String priceValue = priceString.replaceAll("\\D+", "");
+                if (priceValue.isEmpty()) {
+                    // Log or skip this element, as the price could not be extracted
+                    continue;
+                }
+                long tempPrice = Long.parseLong(priceValue);
+
+                // Check if price falls within the desired range
+                if (tempPrice >= 2000 && tempPrice <= 100000) {
+                    booking.setTitle(title);
+                    booking.setPrice(String.valueOf(tempPrice)); // Set price as string without currency
+                    booking.setMainLink(transformLink(mainLink)); // Transform the link before setting
+
+                    // Assuming location and date are separate fields in the Booking class
+                    String[] parts = locationDate.split("-");
+                    if (parts.length == 2) {
+                        booking.setLocation(parts[0].trim());
+                        booking.setDate(parts[1].trim());
+                    }
+
+                    scrapedBookings.add(booking);
+                }
+            }
+            return CompletableFuture.completedFuture(scrapedBookings);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return CompletableFuture.failedFuture(e);
         }
-
-        System.out.println("Scraping complete. Total pages scraped: " + (currentPage - 1));
-        return allBookings;
     }
 
-    private int getTotalPages(String baseUrl) throws IOException {
-        Document doc = Jsoup.connect(baseUrl).get();
-        Element paginationLink = doc.selectFirst("[data-testid=pagination-link-25]");
-        if (paginationLink != null) {
-            String lastPageUrl = paginationLink.attr("href");
-            return Integer.parseInt(lastPageUrl.substring(lastPageUrl.lastIndexOf('=') + 1));
-        }
-        return 1; // If pagination link is not found, assume only one page
+    private String transformLink(String relativeLink) {
+        return "https://www.olx.ua" + relativeLink;
     }
 
-    private List<Booking> scrapePage(String url) throws IOException {
-        List<Booking> bookings = new ArrayList<>();
-        Document doc = Jsoup.connect(url).get();
-        Elements elements = doc.select("div[data-cy=l-card]");
+    public List<Booking> scrapeAndPersist(String baseUrl) throws InterruptedException, ExecutionException {
+        try {
+            Document doc = Jsoup.connect(baseUrl).get();
+            // Find the pagination list
+            Elements paginationItems = doc.select("li[data-testid='pagination-list-item']");
+            // Find the last page number
+            int totalPages = 1; // Default to 1 if no pagination is found
+            if (!paginationItems.isEmpty()) {
+                Element lastPaginationItem = paginationItems.last();
+                totalPages = Integer.parseInt(lastPaginationItem.text());
+            }
 
-        for (Element element : elements) {
-            Long id = Long.valueOf(element.attr("id")); // Parse id as Long
-            String title = element.select("h6").text();
-            String price = element.select("p[data-testid=ad-price]").text();
-            String locationDate = element.select("p[data-testid=location-date]").text();
-            String area = element.select("span.css-643j0o").text();
-            String mainLink = "https://www.olx.ua" + element.select("a.css-z3gu2d").attr("href"); // Construct main link
+            List<CompletableFuture<List<Booking>>> futures = new ArrayList<>();
+            for (int i = 1; i <= totalPages; i++) {
+                String url = baseUrl + "?page=" + i;
+                System.out.println("scraping page № - " + i);
+                futures.add(scrapePage(url));
+            }
 
-            // Extracting location and date from the combined string
-            String[] parts = locationDate.split("-");
-            String location = parts[0].trim();
-            String date = parts[1].trim();
+            List<Booking> scrapedBookings = new ArrayList<>();
+            for (CompletableFuture<List<Booking>> future : futures) {
+                scrapedBookings.addAll(future.get());
+            }
 
-            Booking booking = new Booking(id, title, price, location, date, area, mainLink);
-            bookings.add(booking);
+            List<Booking> newBookings = new ArrayList<>();
+            for (Booking booking : scrapedBookings) {
+                if (!bookingExists(booking.getTitle())) {
+                    newBookings.add(booking);
+                }
+            }
+
+            bookingRepository.saveAll(newBookings);
+            return scrapedBookings;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Collections.emptyList(); // Handle error appropriately
         }
+    }
 
-        return bookings;
+    private boolean bookingExists(String title) {
+        return bookingRepository.existsByTitle(title);
+    }
+
+    public List<Booking> getAllBookings() {
+        return bookingRepository.findAll();
     }
 }

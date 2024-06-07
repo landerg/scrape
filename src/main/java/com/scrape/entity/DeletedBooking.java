@@ -9,14 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
-public class Booking {
-
+public class DeletedBooking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,14 +23,4 @@ public class Booking {
     private String location;
     private String date;
     private String mainLink;
-
-    public Booking(Long id, String title, String price, String location, String date, String mainLink) {
-        this.id = id;
-        this.title = title;
-        this.price = price;
-        this.location = location;
-        this.date = date;
-
-        this.mainLink = mainLink;
-    }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,7 +57,7 @@
     // Function to fetch and display scraped data
     async function fetchAndDisplayData() {
         try {
-            const response = await fetch('http://localhost:8080/');
+            const response = await fetch('http://localhost:8080/api/bookings');
             const bookings = await response.json();
             displayBookings(bookings);
         } catch (error) {
