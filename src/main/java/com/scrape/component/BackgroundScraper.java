@@ -22,12 +22,12 @@ public class BackgroundScraper {
     private final String baseUrl = "https://www.olx.ua/uk/lvov/q-%D0%BA%D0%B2%D0%B0%D1%80%D1%82%D0%B8%D1%80%D0%B0/";
 
 
-    @PostConstruct
+/*    @PostConstruct
     public void init() {
         scheduledScrape(); // Start the background scraping task immediately after the bean is constructed
-    }
+    }*/
 
-    @Scheduled(fixedRate = 60000) // 60,000 milliseconds = 1 minute
+    @Scheduled(fixedRate = 600000) // 600,000 milliseconds = 10 minute
     public void scheduledScrape() {
         System.out.println("Background scraping initiated...");
         try {

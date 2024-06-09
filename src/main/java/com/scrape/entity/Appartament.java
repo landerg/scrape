@@ -3,18 +3,19 @@ package com.scrape.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.persistence.Id;
 
-@NoArgsConstructor
+
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
-public class Booking {
+public class Appartament {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +23,8 @@ public class Booking {
     private String title;
     private String price;
     private String location;
-    private String date;
+    private String area;
+    private String description;
     private String mainLink;
 
 }
