@@ -4,7 +4,7 @@ import org.springframework.ui.Model;
 import com.scrape.entity.Booking;
 import com.scrape.repository.BookingRepository;
 import com.scrape.service.DataTransferService;
-import com.scrape.service.ScraperService;
+import com.scrape.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class BookingController {
 
     @Autowired
-    private ScraperService scraperService;
+    private BookingService bookingService;
 
     @Autowired
     private BookingRepository bookingRepository;
@@ -31,7 +31,7 @@ public class BookingController {
     public String scrapeWebsite(@RequestParam(required = false) String url) {
         String targetUrl = (url != null) ? url : baseUrl;
         try {
-            List<Booking> scrapedData = scraperService.scrapeAndPersist(targetUrl);
+            List<Booking> scrapedData = bookingService.scrapeAndPersist(targetUrl);
             for (Booking booking : scrapedData) {
                 List<Booking> transferredBookings = dataTransferService.transferDataIfNotExists(booking);
             }

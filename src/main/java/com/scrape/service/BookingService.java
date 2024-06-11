@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class ScraperService {
+public class BookingService {
 
     @Autowired
     private BookingRepository bookingRepository;
