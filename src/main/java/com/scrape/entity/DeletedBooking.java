@@ -1,9 +1,6 @@
 package com.scrape.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,4 +20,8 @@ public class DeletedBooking {
     private String location;
     private String date;
     private String mainLink;
+
+    @OneToOne
+    @JoinColumn(name = "appartament_id")
+    private Appartament appartament;
 }

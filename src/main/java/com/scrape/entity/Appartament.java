@@ -1,13 +1,10 @@
 package com.scrape.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.persistence.Id;
 
 
 @AllArgsConstructor
@@ -27,4 +24,17 @@ public class Appartament {
     private String description;
     private String mainLink;
 
+    @Embedded
+    private AppartamentDescription appartamentDescription;
+
+    @Embedded
+    private Filter filter;
+
+    // Add dependencies with foreign keys to other classes
+    @OneToOne(mappedBy = "appartament", cascade = CascadeType.ALL)
+    private Booking booking;
+
+    @OneToOne(mappedBy = "appartament", cascade = CascadeType.ALL)
+    private DeletedBooking deletedBooking;
 }
+

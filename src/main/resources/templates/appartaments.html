@@ -13,6 +13,7 @@
     <th>Price</th>
     <th>Location</th>
     <th>Area</th>
+    <th>Filter</th>
     <th>Link</th>
   </tr>
   </thead>
@@ -23,6 +24,12 @@
     <td th:text="${appartament.price}">Price</td>
     <td th:text="${appartament.location}">Location</td>
     <td th:text="${appartament.area}">Area</td>
+    <td>
+      <p>Private Person: <span th:text="${appartament.filter.privatePerson}">false</span></p>
+      <p>No Commission: <span th:text="${appartament.filter.noCommission}">false</span></p>
+      <p>Ready to Cooperate with Realtors: <span th:text="${appartament.filter.readyToCooperateWithRealtors}">false</span></p>
+      <!-- Add more filter fields as needed -->
+    </td>
     <td><a th:href="${appartament.mainLink}" th:text="${appartament.mainLink}">Link</a></td>
   </tr>
   </tbody>
