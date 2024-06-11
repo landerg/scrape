@@ -1,5 +1,7 @@
 package com.scrape.entity;
 
+import com.scrape.entity.embeddable.ApartmentDescription;
+import com.scrape.entity.embeddable.Filter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Appartament {
+public class Apartment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,16 +27,15 @@ public class Appartament {
     private String mainLink;
 
     @Embedded
-    private AppartamentDescription appartamentDescription;
+    private ApartmentDescription apartmentDescription;
 
     @Embedded
     private Filter filter;
 
     // Add dependencies with foreign keys to other classes
-    @OneToOne(mappedBy = "appartament", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "apartment", cascade = CascadeType.ALL)
     private Booking booking;
 
-    @OneToOne(mappedBy = "appartament", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "apartment", cascade = CascadeType.ALL)
     private DeletedBooking deletedBooking;
 }
-

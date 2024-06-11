@@ -23,6 +23,6 @@ public class Booking {
     private String mainLink;
 
     @OneToOne
-    @JoinColumn(name = "appartament_id")
-    private Appartament appartament;
+    @JoinColumn(name = "apartment_id")
+    private Apartment apartment;
 }

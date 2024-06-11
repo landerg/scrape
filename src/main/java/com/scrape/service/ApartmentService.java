@@ -1,10 +1,10 @@
 package com.scrape.service;
 
-import com.scrape.entity.Appartament;
-import com.scrape.entity.AppartamentDescription;
+import com.scrape.entity.Apartment;
+import com.scrape.entity.embeddable.ApartmentDescription;
 import com.scrape.entity.Booking;
-import com.scrape.entity.Filter;
-import com.scrape.repository.ApartamentRepository;
+import com.scrape.entity.embeddable.Filter;
+import com.scrape.repository.ApartmentRepository;
 import com.scrape.repository.BookingRepository;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -16,11 +16,22 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+
+
 @Service
-public class ApartamentService {
+public class ApartmentService {
 
     @Autowired
-    private ApartamentRepository apartamentRepository;
+    private ApartmentRepository apartmentRepository;
 
     @Autowired
     private BookingRepository bookingRepository;
@@ -30,8 +41,8 @@ public class ApartamentService {
         return booking.map(Booking::getMainLink).orElse(null);
     }
 
-    private void populateAppartamentDetails(Document doc, AppartamentDescription appartamentDescription, Filter filter) {
-        // Populate appartamentDescription and filter fields here
+    private void populateApartmentDetails(Document doc, ApartmentDescription apartmentDescription, Filter filter) {
+        // Populate apartmentDescription and filter fields here
     }
 
     public void scrapeDataFromLink(String mainLink) {
@@ -45,21 +56,21 @@ public class ApartamentService {
             String location = "location placeholder"; // Update this according to the actual HTML structure
             String area = "area placeholder"; // Update this according to the actual HTML structure
 
-            AppartamentDescription appartamentDescription = new AppartamentDescription();
+            ApartmentDescription apartmentDescription = new ApartmentDescription();
             Filter filter = new Filter();
-            populateAppartamentDetails(doc, appartamentDescription, filter);
+            populateApartmentDetails(doc, apartmentDescription, filter);
 
-            Appartament appartament = new Appartament();
-            appartament.setTitle(title);
-            appartament.setDescription(description);
-            appartament.setPrice(price);
-            appartament.setLocation(location);
-            appartament.setArea(area);
-            appartament.setMainLink(mainLink);
-            appartament.setAppartamentDescription(appartamentDescription);
-            appartament.setFilter(filter);
+            Apartment apartment = new Apartment();
+            apartment.setTitle(title);
+            apartment.setDescription(description);
+            apartment.setPrice(price);
+            apartment.setLocation(location);
+            apartment.setArea(area);
+            apartment.setMainLink(mainLink);
+            apartment.setApartmentDescription(apartmentDescription);
+            apartment.setFilter(filter);
 
-            apartamentRepository.save(appartament);
+            apartmentRepository.save(apartment);
         } catch (HttpStatusException e) {
             if (e.getStatusCode() == 404) {
                 System.out.println("URL not found: " + mainLink);
@@ -71,8 +82,8 @@ public class ApartamentService {
         }
     }
 
-    public List<Appartament> getAllAppartaments() {
-        return apartamentRepository.findAll();
+    public List<Apartment> getAllApartments() {
+        return apartmentRepository.findAll();
     }
 
     public List<String> getAllBookingLinks() {
@@ -84,3 +95,4 @@ public class ApartamentService {
                 .collect(Collectors.toList());
     }
 }
+

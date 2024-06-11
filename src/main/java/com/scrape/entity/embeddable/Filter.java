@@ -1,4 +1,4 @@
-package com.scrape.entity;
+package com.scrape.entity.embeddable;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

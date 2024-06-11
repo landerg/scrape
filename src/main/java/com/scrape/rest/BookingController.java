@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class ScraperController {
+public class BookingController {
 
     @Autowired
     private ScraperService scraperService;

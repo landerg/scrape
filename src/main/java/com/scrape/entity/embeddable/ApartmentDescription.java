@@ -1,4 +1,4 @@
-package com.scrape.entity;
+package com.scrape.entity.embeddable;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Embeddable
-public class AppartamentDescription {
+public class ApartmentDescription {
     private String typeOfHouse;
     private int floor;
     private int numberOfFloors;
