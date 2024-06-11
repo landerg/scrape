@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scrape Result</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h1 class="text-center">Scrape Result</h1>
+  <div class="mt-4">
+    <ul th:each="apartment : ${apartments}">
+      <li>
+        <div>
+          <h2>Apartment Details</h2>
+          <p><strong>Title:</strong> <span th:text="${apartment.title}"></span></p>
+          <p><strong>Price:</strong> <span th:text="${apartment.price}"></span></p>
+          <p><strong>Location:</strong> <span th:text="${apartment.location}"></span></p>
+          <p><strong>Date:</strong> <span th:text="${apartment.date}"></span></p>
+          <p><strong>Main Link:</strong> <a th:href="${apartment.mainLink}" th:text="${apartment.mainLink}"></a></p>
+
+          <h3>Description</h3>
+          <p><span th:text="${apartment.apartmentDescription.description}"></span></p>
+
+          <h3>Filter</h3>
+          <p><strong>Floor:</strong> <span th:text="${apartment.filter.floor}"></span></p>
+          <p><strong>Total Area:</strong> <span th:text="${apartment.filter.totalArea}"></span></p>
+          <p><strong>Kitchen Area:</strong> <span th:text="${apartment.filter.kitchenArea}"></span></p>
+          <p><strong>Wall Type:</strong> <span th:text="${apartment.filter.wallType}"></span></p>
+          <p><strong>Room Count:</strong> <span th:text="${apartment.filter.roomCount}"></span></p>
+          <p><strong>Bathroom Type:</strong> <span th:text="${apartment.filter.bathroomType}"></span></p>
+          <p><strong>Heating Type:</strong> <span th:text="${apartment.filter.heatingType}"></span></p>
+          <p><strong>Renovation Type:</strong> <span th:text="${apartment.filter.renovationType}"></span></p>
+          <p><strong>Furniture Availability:</strong> <span th:text="${apartment.filter.furnitureAvailability}"></span></p>
+          <p><strong>Appliances:</strong> <span th:text="${apartment.filter.appliances}"></span></p>
+          <p><strong>Multimedia:</strong> <span th:text="${apartment.filter.multimedia}"></span></p>
+          <p><strong>Comfort Options:</strong> <span th:text="${apartment.filter.comfortOptions}"></span></p>
+          <p><strong>Communication Options:</strong> <span th:text="${apartment.filter.communicationOptions}"></span></p>
+          <p><strong>Infrastructure:</strong> <span th:text="${apartment.filter.infrastructure}"></span></p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

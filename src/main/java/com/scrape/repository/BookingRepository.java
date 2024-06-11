@@ -16,4 +16,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     boolean existsByTitle(String title);
 
     void deleteByTitle(String title);
+
+    boolean existsByTitleAndPrice(String title, String price);
 }

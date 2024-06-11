@@ -19,14 +19,22 @@ public class Apartment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private String price;
     private String location;
-    private String area;
-    private String description;
+    private String date;
     private String mainLink;
 
+    // Remove direct description mapping if it exists
+    // @Column(name = "description")
+    // private String description;
+
+    // Replace direct description mapping with embedded ApartmentDescription
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "description", column = @Column(name = "apartment_description"))
+    })
     private ApartmentDescription apartmentDescription;
 
     @Embedded

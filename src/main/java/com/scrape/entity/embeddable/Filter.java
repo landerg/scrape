@@ -12,14 +12,18 @@ import lombok.Setter;
 @Setter
 @Embeddable
 public class Filter {
-    private boolean privatePerson;
-    private boolean noCommission;
-    private boolean readyToCooperateWithRealtors;
-    private boolean internetWorks;
-    private boolean elevatorWorks;
-    private boolean waterSupplyWorks;
-    private boolean heatingWorks;
-    private boolean backupPowerConnected;
-    private boolean petAllowed;
-    private String petType;
+    private String floor;
+    private String totalArea;
+    private String kitchenArea;
+    private String wallType;
+    private String roomCount;
+    private String bathroomType;
+    private String heatingType;
+    private String renovationType;
+    private String furnitureAvailability;
+    private String appliances;
+    private String multimedia;
+    private String comfortOptions;
+    private String communicationOptions;
+    private String infrastructure;
 }

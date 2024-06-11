@@ -1,35 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Apartments</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apartment Details</title>
 </head>
 <body>
-<h1>Apartments</h1>
-<table border="1">
+<h1>All Apartments</h1>
+<table>
   <thead>
   <tr>
     <th>Title</th>
-    <th>Description</th>
     <th>Price</th>
     <th>Location</th>
-    <th>Area</th>
-    <th>Filter</th>
+    <th>Date</th>
     <th>Link</th>
   </tr>
   </thead>
   <tbody>
+  <!-- Iterate over each apartment -->
   <tr th:each="apartment : ${apartments}">
+    <!-- Output apartment details -->
     <td th:text="${apartment.title}">Title</td>
-    <td th:text="${apartment.description}">Description</td>
     <td th:text="${apartment.price}">Price</td>
     <td th:text="${apartment.location}">Location</td>
-    <td th:text="${apartment.area}">Area</td>
-    <td>
-      <p>Private Person: <span th:text="${apartment.filter.privatePerson}">false</span></p>
-      <p>No Commission: <span th:text="${apartment.filter.noCommission}">false</span></p>
-      <p>Ready to Cooperate with Realtors: <span th:text="${apartment.filter.readyToCooperateWithRealtors}">false</span></p>
-      <!-- Add more filter fields as needed -->
-    </td>
+    <td th:text="${apartment.date}">Date</td>
     <td><a th:href="${apartment.mainLink}" th:text="${apartment.mainLink}">Link</a></td>
   </tr>
   </tbody>

@@ -1,5 +1,6 @@
 package com.scrape.service;
 
+import com.scrape.entity.Apartment;
 import com.scrape.entity.Booking;
 import com.scrape.repository.BookingRepository;
 import org.jsoup.Jsoup;
@@ -10,17 +11,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    public void deleteDuplicates() {
+        List<Booking> bookings = bookingRepository.findAll();
+        Set<String> seen = new HashSet<>();
+        for (Booking booking : bookings) {
+            String uniqueKey = booking.getTitle() + booking.getPrice();
+            if (seen.contains(uniqueKey)) {
+                bookingRepository.delete(booking);
+            } else {
+                seen.add(uniqueKey);
+            }
+        }
+    }
 
     @Async
     public CompletableFuture<List<Booking>> scrapePage(String url) {
@@ -55,7 +68,6 @@ public class BookingService {
                     booking.setTitle(title);
                     booking.setPrice(String.valueOf(tempPrice)); // Set price as string without currency
                     booking.setMainLink(transformLink(mainLink)); // Transform the link before setting
-
                     // Assuming location and date are separate fields in the Booking class
                     String[] parts = locationDate.split("-");
                     if (parts.length == 2) {
@@ -63,7 +75,11 @@ public class BookingService {
                         booking.setDate(parts[1].trim());
                     }
 
-                    scrapedBookings.add(booking);
+                    // Check if booking already exists
+                    if (!bookingExists(booking)) {
+                        scrapedBookings.add(booking);
+                        bookingRepository.save(booking); // Save only new bookings
+                    }
                 }
             }
             return CompletableFuture.completedFuture(scrapedBookings);
@@ -71,6 +87,10 @@ public class BookingService {
             e.printStackTrace();
             return CompletableFuture.failedFuture(e);
         }
+    }
+
+    private boolean bookingExists(Booking booking) {
+        return bookingRepository.existsByTitleAndPrice(booking.getTitle(), booking.getPrice());
     }
 
     private String transformLink(String relativeLink) {
@@ -122,5 +142,13 @@ public class BookingService {
 
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
+    }
+
+    public List<Booking> getAllBookingsWithNonNullFields() {
+        List<Booking> allBookings = bookingRepository.findAll();
+        return allBookings.stream()
+                .filter(booking -> booking.getTitle() != null && booking.getPrice() != null
+                        && booking.getLocation() != null && booking.getDate() != null)
+                .collect(Collectors.toList());
     }
 }
